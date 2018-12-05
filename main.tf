@@ -39,7 +39,7 @@ resource "azurerm_subnet" "test2" {
 
 # maquina virtual 1
 variable "prefix" {
-  default = "Mediaset"
+  default = "Mia"
 }
 
 
