@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "test" {
 
 
 resource "azurerm_network_security_group" "test" {
-  name                = "SecurityGroup01"
+  name                = "SG01"
   location            = "${azurerm_resource_group.test.location}"
   resource_group_name = "${azurerm_resource_group.test.name}"
 
@@ -33,7 +33,7 @@ resource "azurerm_subnet" "test2" {
   name           = "subnet2"
   resource_group_name  = "${azurerm_resource_group.test.name}"
   virtual_network_name = "${azurerm_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+    address_prefix = "10.190.2.0/24"
   
   }
 
@@ -153,3 +153,56 @@ resource "azurerm_virtual_machine" "2" {
   }
   }
   
+########################################################################
+resource "azurerm_resource_group" "test3" {
+  name     = "test"
+  location = "West US"
+}
+
+resource "azurerm_virtual_network" "test3" {
+  name                = "test"
+  location            = "${azurerm_resource_group.test3.location}"
+  resource_group_name = "${azurerm_resource_group.test3.name}"
+  address_space       = ["10.0.0.0/16"]
+}
+
+
+resource "azurerm_subnet" "test3" {
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurerm_resource_group.test3.name}"
+  virtual_network_name = "${azurerm_virtual_network.test3.name}"
+  address_prefix       = "10.0.1.0/24"
+}
+
+
+resource "azurerm_public_ip" "test3" {
+  name                = "test"
+  location            = "${azurerm_resource_group.test3.location}"
+  resource_group_name = "${azurerm_resource_group.test3.name}"
+
+  public_ip_address_allocation = "Dynamic"
+}
+
+resource "azurerm_virtual_network_gateway" "test3" {
+  name                = "test"
+  location            = "${azurerm_resource_group.test3.location}"
+  resource_group_name = "${azurerm_resource_group.test3.name}"
+
+  type     = "Vpn"
+  vpn_type = "RouteBased"
+
+  active_active = false
+  enable_bgp    = false
+  sku           = "Basic"
+
+    ip_configuration {
+    name                          = "vnetGatewayConfig"
+    public_ip_address_id          = "${azurerm_public_ip.test3.id}"
+    private_ip_address_allocation = "Dynamic"
+    subnet_id                     = "${azurerm_subnet.test3.id}"
+ }
+
+  vpn_client_configuration {
+    address_space = ["10.100.200.0/24"]
+}
+}
