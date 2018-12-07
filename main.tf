@@ -76,7 +76,7 @@ resource "azurerm_virtual_machine" "1" {
   }
 
   storage_os_disk {
-    name              = "myosdisk1"
+    name              = "myosdisk1_machine1"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -132,7 +132,7 @@ resource "azurerm_virtual_machine" "2" {
   }
 
   storage_os_disk {
-    name              = "myosdisk1"
+    name              = "myosdisk1_machine2"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -154,39 +154,39 @@ resource "azurerm_virtual_machine" "2" {
   }
   
 ########################################################################
-resource "azurerm_resource_group" "test3" {
-  name     = "test"
-  location = "West US"
-}
+#resource "azurerm_resource_group" "test3" {
+#  name     = "test"
+#  location = "West US"
+#}
 
-resource "azurerm_virtual_network" "test3" {
-  name                = "test"
-  location            = "${azurerm_resource_group.test3.location}"
-  resource_group_name = "${azurerm_resource_group.test3.name}"
-  address_space       = ["10.0.0.0/16"]
-}
+#resource "azurerm_virtual_network" "test3" {
+#  name                = "test"
+#  location            = "${azurerm_resource_group.test3.location}"
+#  resource_group_name = "${azurerm_resource_group.test3.name}"
+#  address_space       = ["10.0.0.0/16"]
+#}
 
 
 resource "azurerm_subnet" "test3" {
   name                 = "GatewaySubnet"
-  resource_group_name  = "${azurerm_resource_group.test3.name}"
-  virtual_network_name = "${azurerm_virtual_network.test3.name}"
-  address_prefix       = "10.0.1.0/24"
+  resource_group_name  = "${azurerm_resource_group.test.name}"
+  virtual_network_name = "${azurerm_virtual_network.test.name}"
+  address_prefix       = "10.190.3.0/24"
 }
 
 
 resource "azurerm_public_ip" "test3" {
-  name                = "test"
-  location            = "${azurerm_resource_group.test3.location}"
-  resource_group_name = "${azurerm_resource_group.test3.name}"
+  name                = "ip_publica"
+  location            = "${azurerm_resource_group.test.location}"
+  resource_group_name = "${azurerm_resource_group.test.name}"
 
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurerm_virtual_network_gateway" "test3" {
   name                = "test"
-  location            = "${azurerm_resource_group.test3.location}"
-  resource_group_name = "${azurerm_resource_group.test3.name}"
+  location            = "${azurerm_resource_group.test.location}"
+  resource_group_name = "${azurerm_resource_group.test.name}"
 
   type     = "Vpn"
   vpn_type = "RouteBased"
@@ -205,4 +205,11 @@ resource "azurerm_virtual_network_gateway" "test3" {
   vpn_client_configuration {
     address_space = ["10.100.200.0/24"]
 }
+}
+resource "azurerm_local_network_gateway" "home" {
+  name                = "backHome"
+  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurerm_resource_group.test.location}"
+  gateway_address     = "12.13.14.15"
+  address_space       = ["10.0.0.0/16"]
 }
