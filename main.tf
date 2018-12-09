@@ -207,10 +207,29 @@ resource "azurerm_virtual_network_gateway" "test3" {
 }
 }
 resource "azurerm_local_network_gateway" "home" {
-  name                = "RED_LOCAL_NETWORK_GW"
+  name                = "home"
   resource_group_name = "${azurerm_resource_group.test.name}"
   location            = "${azurerm_resource_group.test.location}"
   gateway_address     = "5.40.40.60"
   address_space       = ["10.100.200.0/24"]
+ # type                       = "IPsec"
+ # virtual_network_gateway_id = "${azurerm_virtual_network_gateway.test3.id}"
+ # local_network_gateway_id   = "${azurerm_local_network_gateway.home.id}"
+ #
+ # shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
+
 }
+
+resource "azurerm_virtual_network_gateway_connection" "onpremise" {
+  name                = "onpremise"
+  location            = "${azurerm_resource_group.test.location}"
+  resource_group_name = "${azurerm_resource_group.test.name}"
+
+  type                       = "IPsec"
+  virtual_network_gateway_id = "${azurerm_virtual_network_gateway.test3.id}"
+  local_network_gateway_id   = "${azurerm_local_network_gateway.home.id}"
+
+  shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
+}
+
 
