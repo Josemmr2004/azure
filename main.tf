@@ -207,9 +207,10 @@ resource "azurerm_virtual_network_gateway" "test3" {
 }
 }
 resource "azurerm_local_network_gateway" "home" {
-  name                = "backHome"
+  name                = "RED_LOCAL_NETWORK_GW"
   resource_group_name = "${azurerm_resource_group.test.name}"
   location            = "${azurerm_resource_group.test.location}"
-  gateway_address     = "12.13.14.15"
-  address_space       = ["10.0.0.0/16"]
+  gateway_address     = "5.40.40.60"
+  address_space       = ["10.100.200.0/24"]
 }
+
