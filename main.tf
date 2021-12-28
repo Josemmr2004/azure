@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "test" {
   location = "West US"
 }
 
-
+###############################################################################
 resource "azurerm_network_security_group" "test" {
   name                = "SG01"
   location            = "${azurerm_resource_group.test.location}"
